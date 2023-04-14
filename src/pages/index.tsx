@@ -1,5 +1,7 @@
+import Connect from "components/Connect";
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useAccount } from "wagmi";
 import { api } from "~/utils/api";
 
 const stashStyles =
@@ -11,6 +13,8 @@ const Home: NextPage = () => {
   const { data } = api.receiver.fetchAssets.useQuery({
     receiverAddress: "0xc948f2F172Fe25977E322c8D82F8f53338f8a051"
   });
+  const { address } = useAccount();
+
   return (
     <>
       <Head>
@@ -20,15 +24,23 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center  bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div>
+          <div className="flex w-full justify-between px-4">
+            <div></div>
             <h1 className="text-4xl font-bold text-white">Swapsies</h1>
+            <Connect />
           </div>
           <div className="flex gap-8">
             <div className="flex flex-col gap-y-2">
               <div>
                 <label htmlFor="creatorAddress" className="label">
                   Creator Address
-                  <input name="creatorAddress" type="text" className="input" />
+                  <input
+                    name="creatorAddress"
+                    type="text"
+                    className="input"
+                    disabled
+                    value={address}
+                  />
                 </label>
               </div>
               <div className={stashStyles}>left container</div>
