@@ -4,8 +4,8 @@ import { type Dispatch, type SetStateAction, useState } from "react";
 
 interface NftCardProps {
   nft: OwnedNft;
-  selectedNft: OwnedNft | null;
-  selectNft: Dispatch<SetStateAction<OwnedNft | null>>;
+  selectedNft?: OwnedNft | null;
+  selectNft?: Dispatch<SetStateAction<OwnedNft | null>>;
 }
 
 const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
@@ -17,6 +17,10 @@ const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
     }
 
     return nftStringSrc;
+  };
+
+  const handleSelect = () => {
+    selectNft?.(nft);
   };
   return (
     <div className="card bg-base-100 shadow-xl lg:card-side">
@@ -35,7 +39,9 @@ const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
         <h2 className="card-title">{nft.title || "Untitled NFT"}</h2>
         {nft.description && <p>{nft.description}</p>}
         <div className="card-actions justify-end">
-          <button className="btn-primary btn">Select</button>
+          <button className="btn-primary btn" onClick={handleSelect}>
+            Select
+          </button>
         </div>
       </div>
     </div>

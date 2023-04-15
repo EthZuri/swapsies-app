@@ -30,6 +30,7 @@ const Home: NextPage = () => {
   const [senderNft, setSenderNft] = useState<OwnedNft | null>(null);
   const [receiverNft, setReceiverNft] = useState<OwnedNft | null>(null);
 
+  console.log(senderData?.nfts.ownedNfts[0]);
   return (
     <>
       <Head>
@@ -39,25 +40,15 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex  min-h-screen flex-col items-center  bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="flex w-full justify-between px-4">
-            <div></div>
+          <div className="flex w-full justify-start px-4">
             <h1 className="text-4xl font-bold text-white">Swapsies</h1>
-            <Connect />
           </div>
           <div className="flex gap-8">
             <div className="flex flex-col gap-y-2">
-              <div>
-                <label htmlFor="creatorAddress" className="label">
-                  Creator Address
-                  <input
-                    name="creatorAddress"
-                    type="text"
-                    className="input"
-                    disabled
-                    value={address}
-                  />
-                </label>
+              <div className={openTradeContainerStyles}>
+                {senderNft && <NftCard nft={senderNft} />}
               </div>
+              <Connect />
               <div className={stashStyles}>
                 {!senderData?.nfts
                   ? "Empty"
@@ -70,7 +61,6 @@ const Home: NextPage = () => {
                       />
                     ))}
               </div>
-              <div className={openTradeContainerStyles}>offered items</div>
             </div>
             <div className="flex gap-2">
               <input type="checkbox" className="w-16 rounded-lg bg-white p-2" />
@@ -81,6 +71,9 @@ const Home: NextPage = () => {
               />
             </div>
             <div className="flex w-full flex-col gap-y-2">
+              <div className={openTradeContainerStyles}>
+                {receiverNft && <NftCard nft={receiverNft} />}
+              </div>
               <div>
                 <label htmlFor="receiverAddress" className="label">
                   Receiver Address
@@ -104,7 +97,6 @@ const Home: NextPage = () => {
                       />
                     ))}
               </div>
-              <div className={openTradeContainerStyles}>offered items</div>
             </div>
           </div>
         </div>
