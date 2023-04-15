@@ -6,20 +6,24 @@ import { useAccount } from "wagmi";
 import { api } from "~/utils/api";
 
 const stashStyles =
-  "grid grid-cols-1 overflow-auto items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full h-96";
+  "grid grid-cols-3 overflow-auto items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full h-96";
 
 const openTradeContainerStyles =
-  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-96 h-48";
+  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black h-48";
+
 const Home: NextPage = () => {
   const { data: receiverData } = api.assets.fetchReceiverAssets.useQuery({
     receiverAddress: "0xc948f2F172Fe25977E322c8D82F8f53338f8a051",
   });
   const { address } = useAccount();
-  const { data: senderData } = api.assets.fetchReceiverAssets.useQuery({
-    receiverAddress: address ?? "",
-  },{
-    enabled: !!address
-  });
+  const { data: senderData } = api.assets.fetchReceiverAssets.useQuery(
+    {
+      receiverAddress: address ?? "",
+    },
+    {
+      enabled: !!address,
+    }
+  );
   return (
     <>
       <Head>
@@ -65,11 +69,16 @@ const Home: NextPage = () => {
                 className="w-16 rounded-lg bg-white p-2"
               />
             </div>
-            <div className="flex flex-col gap-y-2">
+            <div className="flex w-full flex-col gap-y-2">
               <div>
                 <label htmlFor="receiverAddress" className="label">
                   Receiver Address
-                  <input name="receiverAddress" type="text" className="input"  value="0xc948f2F172Fe25977E322c8D82F8f53338f8a051"/>
+                  <input
+                    name="receiverAddress"
+                    type="text"
+                    className="input"
+                    value="0xc948f2F172Fe25977E322c8D82F8f53338f8a051"
+                  />
                 </label>
               </div>
               <div className={stashStyles}>
