@@ -10,8 +10,8 @@ const stashStyles =
 const openTradeContainerStyles =
   "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-96 h-48";
 const Home: NextPage = () => {
-  const { data } = api.receiver.fetchAssets.useQuery({
-    receiverAddress: "0xc948f2F172Fe25977E322c8D82F8f53338f8a051"
+  const { data } = api.assets.fetchReceiverAssets.useQuery({
+    receiverAddress: "0xc948f2F172Fe25977E322c8D82F8f53338f8a051",
   });
   const { address } = useAccount();
 
