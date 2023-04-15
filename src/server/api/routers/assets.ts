@@ -14,7 +14,7 @@ export const assetsRouter = createTRPCRouter({
 
       // Get the balance of the receiver address
       const balance = await provider.getBalance(input.receiverAddress);
-
+      const formattedBalance = ethers.utils.formatEther(balance);
       // Get the NFTs of the receiver address
       const settings = {
         apiKey: "ZxqwLlN6BozfXbz4h1fS05-nu7PKnmn1",
@@ -27,6 +27,6 @@ export const assetsRouter = createTRPCRouter({
       // Return the balance and NFTs
       console.log(balance, nfts);
 
-      return { balance, nfts };
+      return { balance: formattedBalance, nfts };
     }),
 });
