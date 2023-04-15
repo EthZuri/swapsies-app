@@ -11,11 +11,15 @@ const stashStyles =
 const openTradeContainerStyles =
   "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-96 h-48";
 const Home: NextPage = () => {
-  const { data } = api.assets.fetchReceiverAssets.useQuery({
+  const { data: receiverData } = api.assets.fetchReceiverAssets.useQuery({
     receiverAddress: "0xc948f2F172Fe25977E322c8D82F8f53338f8a051",
   });
   const { address } = useAccount();
-
+  const { data: senderData } = api.assets.fetchReceiverAssets.useQuery({
+    receiverAddress: address ?? "",
+  },{
+    enabled: !!address
+  });
   return (
     <>
       <Head>
@@ -44,7 +48,13 @@ const Home: NextPage = () => {
                   />
                 </label>
               </div>
-              <div className={stashStyles}>left container</div>
+              <div className={stashStyles}>
+                {!senderData?.nfts
+                  ? "Empty"
+                  : senderData.nfts.ownedNfts.map((nft) => (
+                      <NftCard key={nft.tokenId} nft={nft} />
+                    ))}
+              </div>
               <div className={openTradeContainerStyles}>offered items</div>
             </div>
             <div className="flex gap-2">
@@ -59,13 +69,13 @@ const Home: NextPage = () => {
               <div>
                 <label htmlFor="receiverAddress" className="label">
                   Receiver Address
-                  <input name="receiverAddress" type="text" className="input" />
+                  <input name="receiverAddress" type="text" className="input"  value="0xc948f2F172Fe25977E322c8D82F8f53338f8a051"/>
                 </label>
               </div>
               <div className={stashStyles}>
-                {!data?.nfts
+                {!receiverData?.nfts
                   ? "Empty"
-                  : data.nfts.ownedNfts.map((nft) => (
+                  : receiverData.nfts.ownedNfts.map((nft) => (
                       <NftCard key={nft.tokenId} nft={nft} />
                     ))}
               </div>
