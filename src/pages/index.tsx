@@ -6,8 +6,13 @@ import abi from "contract/abi";
 import { utils } from "ethers";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
+import { useEffect, useState } from "react";
+import {
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from "wagmi";
 import { api } from "~/utils/api";
 const stashStyles =
   "grid grid-cols-3 overflow-auto items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full min-h-96";
@@ -34,6 +39,7 @@ const Home: NextPage = () => {
 
   const [senderNft, setSenderNft] = useState<OwnedNft | null>(null);
   const [receiverNft, setReceiverNft] = useState<OwnedNft | null>(null);
+  const { chain } = useNetwork();
 
   const [hash, setHash] = useState("");
   const { config } = usePrepareContractWrite({
@@ -57,6 +63,7 @@ const Home: NextPage = () => {
       receiverNft?.contract.address,
       receiverNft?.tokenId,
     ],
+    enabled: !!hash,
   });
 
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
@@ -87,6 +94,24 @@ const Home: NextPage = () => {
     setHash(hash);
   };
 
+  useEffect(() => {
+    console.log({
+      asker: address,
+      filler: receiverAddress,
+      askerToken: senderNft?.contract.address,
+      askerAmount: senderNft?.tokenId,
+      fillerToken: receiverNft?.contract.address,
+      fillerAmount: receiverNft?.tokenId,
+    });
+  }, [
+    hash,
+    address,
+    receiverAddress,
+    senderNft?.contract.address,
+    senderNft?.tokenId,
+    receiverNft?.contract.address,
+    receiverNft?.tokenId,
+  ]);
   const placeSwap = () => {
     // const res = pushToContract();
     write?.();
@@ -105,6 +130,7 @@ const Home: NextPage = () => {
             <div className="flex w-full items-center justify-between gap-2">
               <h1 className="text-4xl font-bold text-white">Swapses</h1>{" "}
               {data && JSON.stringify(data)} {isLoading && "Loading..."}{" "}
+              {chain && chain.name}
               {isSuccess && "Success!"}
               <button
                 className="btn-primary btn-lg btn"

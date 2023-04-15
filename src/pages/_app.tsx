@@ -4,12 +4,12 @@ import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
 
-import { WagmiConfig, createClient, configureChains, mainnet } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
+import { WagmiConfig, createClient, configureChains, goerli } from "wagmi";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet],
-  [publicProvider()]
+const { provider, webSocketProvider } = configureChains(
+  [goerli],
+  [alchemyProvider({ apiKey: "ZxqwLlN6BozfXbz4h1fS05-nu7PKnmn1" })]
 );
 
 const client = createClient({
