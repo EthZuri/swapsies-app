@@ -1,12 +1,14 @@
 import { type OwnedNft } from "alchemy-sdk";
 import Image from "next/image";
-import { useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 
 interface NftCardProps {
   nft: OwnedNft;
+  selectedNft: OwnedNft | null;
+  selectNft: Dispatch<SetStateAction<OwnedNft | null>>;
 }
 
-const NftCard = ({ nft }: NftCardProps) => {
+const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
   const [showPlaceholder, setShowPlaceholder] = useState(false);
 
   const getImageSrc = (nftStringSrc?: string) => {

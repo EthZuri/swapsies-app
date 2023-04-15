@@ -1,7 +1,9 @@
+import { type OwnedNft } from "alchemy-sdk";
 import Connect from "components/Connect";
 import NftCard from "components/NftCard/NftCard";
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { api } from "~/utils/api";
 
@@ -24,6 +26,10 @@ const Home: NextPage = () => {
       enabled: !!address,
     }
   );
+
+  const [senderNft, setSenderNft] = useState<OwnedNft | null>(null);
+  const [receiverNft, setReceiverNft] = useState<OwnedNft | null>(null);
+
   return (
     <>
       <Head>
@@ -56,7 +62,12 @@ const Home: NextPage = () => {
                 {!senderData?.nfts
                   ? "Empty"
                   : senderData.nfts.ownedNfts.map((nft) => (
-                      <NftCard key={nft.tokenId} nft={nft} />
+                      <NftCard
+                        key={nft.tokenId}
+                        nft={nft}
+                        selectedNft={senderNft}
+                        selectNft={setSenderNft}
+                      />
                     ))}
               </div>
               <div className={openTradeContainerStyles}>offered items</div>
@@ -85,7 +96,12 @@ const Home: NextPage = () => {
                 {!receiverData?.nfts
                   ? "Empty"
                   : receiverData.nfts.ownedNfts.map((nft) => (
-                      <NftCard key={nft.tokenId} nft={nft} />
+                      <NftCard
+                        key={nft.tokenId}
+                        nft={nft}
+                        selectedNft={receiverNft}
+                        selectNft={setReceiverNft}
+                      />
                     ))}
               </div>
               <div className={openTradeContainerStyles}>offered items</div>
