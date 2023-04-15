@@ -1,6 +1,7 @@
 import { type OwnedNft } from "alchemy-sdk";
 import Connect from "components/Connect";
 import NftCard from "components/NftCard/NftCard";
+import { ethers } from "ethers";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
@@ -11,11 +12,12 @@ const stashStyles =
   "grid grid-cols-3 overflow-auto items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full h-96";
 
 const openTradeContainerStyles =
-  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black h-48";
+  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black h-64";
 
+const receiverAddress = "0xc948f2F172Fe25977E322c8D82F8f53338f8a051";
 const Home: NextPage = () => {
   const { data: receiverData } = api.assets.fetchReceiverAssets.useQuery({
-    receiverAddress: "0xc948f2F172Fe25977E322c8D82F8f53338f8a051",
+    receiverAddress,
   });
   const { address } = useAccount();
   const { data: senderData } = api.assets.fetchReceiverAssets.useQuery(
@@ -30,7 +32,27 @@ const Home: NextPage = () => {
   const [senderNft, setSenderNft] = useState<OwnedNft | null>(null);
   const [receiverNft, setReceiverNft] = useState<OwnedNft | null>(null);
 
-  console.log(senderData?.nfts.ownedNfts[0]);
+  const generateHash = () => {
+    const struct = {
+      asker: address,
+      filler: receiverAddress,
+      askerNft: {
+        contractAddress: senderNft?.contract.address,
+        tokenId: senderNft?.tokenId,
+      },
+      fillerNft: {
+        contractAddress: receiverNft?.contract.address,
+        tokenId: receiverNft?.tokenId,
+      },
+    };
+    const hash = ethers.utils.id(JSON.stringify(struct));
+    return { hash, struct };
+  };
+
+  const placeSwap = () => {
+    const hash = generateHash();
+    //  submit hash to smart contract
+  };
   return (
     <>
       <Head>
@@ -45,9 +67,11 @@ const Home: NextPage = () => {
           </div>
           <div className="flex gap-8">
             <div className="flex flex-col gap-y-2">
-              <div className={openTradeContainerStyles}>
-                {senderNft && <NftCard nft={senderNft} />}
-              </div>
+              {senderNft && (
+                <div className={openTradeContainerStyles}>
+                  <NftCard nft={senderNft} />
+                </div>
+              )}
               <Connect />
               <div className={stashStyles}>
                 {!senderData?.nfts
@@ -63,17 +87,16 @@ const Home: NextPage = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <input type="checkbox" className="w-16 rounded-lg bg-white p-2" />
-              <input
-                type="checkbox"
-                disabled
-                className="w-16 rounded-lg bg-white p-2"
-              />
+              <button className="btn-primary btn-lg btn" onClick={placeSwap}>
+                Place swap
+              </button>
             </div>
             <div className="flex w-full flex-col gap-y-2">
-              <div className={openTradeContainerStyles}>
-                {receiverNft && <NftCard nft={receiverNft} />}
-              </div>
+              {receiverNft && (
+                <div className={openTradeContainerStyles}>
+                  <NftCard nft={receiverNft} />
+                </div>
+              )}
               <div>
                 <label htmlFor="receiverAddress" className="label">
                   Receiver Address
