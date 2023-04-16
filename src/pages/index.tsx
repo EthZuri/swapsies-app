@@ -1,121 +1,71 @@
 import { type OwnedNft } from "alchemy-sdk";
-import Connect from "components/Connect";
-import NftCard from "components/NftCard/NftCard";
-import SelectedNft from "components/SelectedNft/SelectedNft";
-import abi from "contract/abi";
-import { utils } from "ethers";
+import Logo from "~/components/Logo";
+import Stepper from "~/components/Stepper/Stepper";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-} from "wagmi";
+import { type Dispatch, type SetStateAction, useState } from "react";
+import { useAccount } from "wagmi";
 import { api } from "~/utils/api";
-const stashStyles =
-  "grid grid-cols-3 overflow-auto items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full min-h-96";
+import TokenSelectorPage from "~/components/TokenSelectorPage/TokenSelectorPage";
+import Connect from "~/components/Connect";
+import SelectedNft from "~/components/SelectedNft";
+
+const receiverAddress = "0x4B04015B7D7D6D54c6b7342CEc0bb581c7D25b29";
 
 const openTradeContainerStyles =
-  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black min-h-64";
-
-const contractAddress = "0xe0B9113392cBd5DE14CC2dd049F077fd35efa76A";
-const receiverAddress = "0xc948f2F172Fe25977E322c8D82F8f53338f8a051";
+  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full h-[500px]";
 
 const Home: NextPage = () => {
-  const { data: receiverData } = api.assets.fetchReceiverAssets.useQuery({
-    receiverAddress,
-  });
   const { address } = useAccount();
-  const { data: senderData } = api.assets.fetchReceiverAssets.useQuery(
-    {
-      receiverAddress: address ?? "",
-    },
-    {
-      enabled: !!address,
-    }
-  );
 
-  const [senderNft, setSenderNft] = useState<OwnedNft | null>(null);
-  const [receiverNft, setReceiverNft] = useState<OwnedNft | null>(null);
-  const { chain } = useNetwork();
-
-  const [hash, setHash] = useState("");
-  const { config } = usePrepareContractWrite({
-    address: contractAddress,
-    abi: abi,
-    functionName: "createAsk",
-    // bytes32 askHash,
-    //     address asker,
-    //     address filler,
-    //     address askerToken,
-    //     uint256 askerAmount,
-    //     address fillerToken,
-    //     uint256 fillerAmount
-
-    args: [
-      hash,
-      address,
+  const { data: receiverData, isLoading: isLoadingReceiverData } =
+    api.assets.fetchReceiverAssets.useQuery({
       receiverAddress,
-      senderNft?.contract.address,
-      senderNft?.tokenId,
-      receiverNft?.contract.address,
-      receiverNft?.tokenId,
-    ],
-    enabled: !!hash,
-  });
+    });
+  const { data: senderData, isLoading: isLoadingSenderData } =
+    api.assets.fetchReceiverAssets.useQuery(
+      {
+        receiverAddress: address ?? "",
+      },
+      {
+        enabled: !!address,
+      }
+    );
 
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+  const [senderNft, setSenderNft] = useState<OwnedNft[] | null>(null);
+  const [receiverNft, setReceiverNft] = useState<OwnedNft[] | null>(null);
 
-  const generateHash = () => {
-    // struct Swap {
-    //   {
-    // bytes32 askHash,
-    // address asker,
-    // address filler,
-    // address askerToken,
-    // uint256 askerAmount,
-    // address fillerToken,
-    // uint256 fillerAmount
-    // }
+  const [senderToken, setSenderToken] = useState<{
+    tokenAddress: string;
+    amount: number;
+    symbol: string;
+  }>();
 
-    const struct = {
-      asker: address,
-      filler: receiverAddress,
-      askerToken: senderNft?.contract.address,
-      askerAmount: senderNft?.tokenId,
-      fillerToken: receiverNft?.contract.address,
-      fillerAmount: receiverNft?.tokenId,
-    };
+  const [receiverToken, setReceiverToken] = useState<{
+    tokenAddress: string;
+    amount: number;
+    symbol: string;
+  }>();
 
-    const hash = utils.id(JSON.stringify(struct));
+  const [currentStep, setCurrentStep] = useState(0);
 
-    setHash(hash);
+  const reset = () => {
+    setSenderNft(null);
+    setReceiverNft(null);
+    setSenderToken(undefined);
+    setReceiverToken(undefined);
+    setCurrentStep(0);
   };
 
-  useEffect(() => {
-    console.log({
-      asker: address,
-      filler: receiverAddress,
-      askerToken: senderNft?.contract.address,
-      askerAmount: senderNft?.tokenId,
-      fillerToken: receiverNft?.contract.address,
-      fillerAmount: receiverNft?.tokenId,
-    });
-  }, [
-    hash,
-    address,
-    receiverAddress,
-    senderNft?.contract.address,
-    senderNft?.tokenId,
-    receiverNft?.contract.address,
-    receiverNft?.tokenId,
-  ]);
-  const placeSwap = () => {
-    // const res = pushToContract();
-    write?.();
-    //  submit hash to smart contract
+  const handleSelectNft = (
+    nft: OwnedNft,
+    setter: Dispatch<SetStateAction<OwnedNft[] | null>>
+  ) => {
+    if (!senderNft) {
+      setter([nft]);
+    } else {
+      setter([...senderNft, nft]);
+    }
   };
   return (
     <>
@@ -124,52 +74,32 @@ const Home: NextPage = () => {
         <meta name="description" content="Simple p2p swaps" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex  min-h-screen flex-col items-center  bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+      <main className="flex  min-h-screen flex-col items-center  bg-gradient-to-b from-[#c5dadc] to-[#c5daed]">
+        <div className="container flex flex-col items-center justify-center gap-4 py-4 ">
           <div className="flex w-full justify-start px-4">
             <div className="flex w-full items-center justify-between gap-2">
-              <h1 className="text-4xl font-bold text-white">Swapses</h1>{" "}
-              {data && JSON.stringify(data)} {isLoading && "Loading..."}{" "}
-              {chain && chain.name}
-              {isSuccess && "Success!"}
-              <button
-                className="btn-primary btn-lg btn"
-                onClick={generateHash}
-                disabled={!senderNft || !receiverNft}
-              >
-                Generate hash
-              </button>
-              <button
-                className="btn-primary btn-lg btn"
-                onClick={placeSwap}
-                disabled={!senderNft || !receiverNft || !write}
-              >
-                Place swap
-              </button>
+              <Logo />
+              <Connect />
             </div>
           </div>
-          <div className="flex gap-8">
-            <div className="flex w-full flex-col gap-y-2">
-              <Connect />
-              {senderNft && (
-                <div className={openTradeContainerStyles}>
-                  <SelectedNft nft={senderNft} />
-                </div>
-              )}
-              <div className={stashStyles}>
-                {!senderData?.nfts
-                  ? "Empty"
-                  : senderData.nfts.ownedNfts.map((nft) => (
-                      <NftCard
-                        key={nft.tokenId}
-                        nft={nft}
-                        selectedNft={senderNft}
-                        selectNft={setSenderNft}
-                      />
-                    ))}
-              </div>
-            </div>
 
+          <Stepper currentStep={currentStep} />
+
+          {currentStep === 0 && (
+            <TokenSelectorPage
+              selectedToken={senderToken}
+              selectToken={setSenderToken}
+              selectedNft={senderNft}
+              selectNft={(nft: OwnedNft) => {
+                handleSelectNft(nft, setSenderNft);
+              }}
+              nftList={senderData?.nfts?.ownedNfts}
+              tokenList={receiverData?.tokenBalances}
+              isLoading={isLoadingReceiverData || isLoadingSenderData}
+              onConfirm={() => setCurrentStep(1)}
+            />
+          )}
+          {currentStep === 1 && (
             <div className="flex w-full flex-col gap-y-2">
               <label htmlFor="receiverAddress" className="label">
                 Receiver Address
@@ -178,27 +108,97 @@ const Home: NextPage = () => {
                   type="text"
                   className="input"
                   value="0xc948f2F172Fe25977E322c8D82F8f53338f8a051"
+                  readOnly
                 />
               </label>
-              {receiverNft && (
-                <div className={openTradeContainerStyles}>
-                  <SelectedNft nft={receiverNft} />
+              <TokenSelectorPage
+                selectedNft={receiverNft}
+                selectNft={(nft: OwnedNft) =>
+                  handleSelectNft(nft, setReceiverNft)
+                }
+                nftList={receiverData?.nfts?.ownedNfts}
+                tokenList={senderData?.tokenBalances}
+                isLoading={isLoadingReceiverData || isLoadingSenderData}
+                selectToken={setReceiverToken}
+                selectedToken={receiverToken}
+                onConfirm={() => setCurrentStep(2)}
+              />
+            </div>
+          )}
+          {currentStep === 2 && (
+            <div className="flex w-2/3 flex-col items-end gap-y-2">
+              <div className="flex w-full gap-8">
+                <div className="w-full">
+                  <div className={openTradeContainerStyles}>
+                    <h2>Selected NFTs</h2>
+                    {senderNft ? (
+                      <SelectedNft nft={senderNft} />
+                    ) : (
+                      <p>No NFT selected</p>
+                    )}
+
+                    <h2>Selected Tokens</h2>
+                    {senderToken ? (
+                      <div className="flex gap-2 text-black">
+                        <p>
+                          {senderToken.amount} {senderToken.symbol} selected
+                        </p>
+                      </div>
+                    ) : (
+                      <p>No token selected</p>
+                    )}
+                  </div>
                 </div>
-              )}
-              <div className={stashStyles}>
-                {!receiverData?.nfts
-                  ? "Empty"
-                  : receiverData.nfts.ownedNfts.map((nft) => (
-                      <NftCard
-                        key={nft.tokenId}
-                        nft={nft}
-                        selectedNft={receiverNft}
-                        selectNft={setReceiverNft}
-                      />
-                    ))}
+
+                <div className="w-full">
+                  <div className={openTradeContainerStyles}>
+                    <h2>Selected NFTs</h2>
+                    {receiverNft ? (
+                      <SelectedNft nft={receiverNft} />
+                    ) : (
+                      <p>No NFT selected</p>
+                    )}
+
+                    <h2>Selected Tokens</h2>
+                    {receiverToken ? (
+                      <div className="flex gap-2 text-black">
+                        <p>
+                          {receiverToken.amount} {receiverToken.symbol} selected
+                        </p>
+                      </div>
+                    ) : (
+                      <p>No token selected</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <button
+                  className="btn-primary btn"
+                  onClick={() => setCurrentStep(3)}
+                >
+                  Open swap
+                </button>
               </div>
             </div>
-          </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="flex w-full flex-col items-center text-black">
+              <div className="flex flex-col gap-y-2 rounded-md bg-white p-4">
+                <h1 className="text-xl">
+                  The swap is open! Hash number: #123123
+                </h1>
+                <h2>
+                  Share this link with your counterparty so they can review and
+                  approve this transaction{" "}
+                </h2>
+                <button className="btn-primary btn" onClick={() => reset()}>
+                  Create another swap
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </>

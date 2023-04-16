@@ -1,11 +1,11 @@
 import { type Media, type OwnedNft } from "alchemy-sdk";
 import Image from "next/image";
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { useState } from "react";
 
 interface NftCardProps {
   nft: OwnedNft;
-  selectedNft?: OwnedNft | null;
-  selectNft?: Dispatch<SetStateAction<OwnedNft | null>>;
+  selectedNft?: OwnedNft[] | null;
+  selectNft?: (nft: OwnedNft) => void;
 }
 
 const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
@@ -13,7 +13,7 @@ const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
 
   const getImageSrc = (nftStringSrc?: Media) => {
     if (showPlaceholder || !nftStringSrc?.thumbnail) {
-      return "https://via.placeholder.com/160";
+      return "https://via.placeholder.com/260";
     }
 
     return nftStringSrc.thumbnail;
@@ -24,18 +24,27 @@ const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
 
     selectNft?.(nft);
   };
+
+  console.log(
+    selectedNft?.findIndex(
+      (selected) =>
+        selected.tokenId === nft.tokenId &&
+        selected.contract.address === nft.contract.address
+    )
+  );
   return (
-    <div className="card bg-base-100 shadow-xl lg:card-side">
+    <div className={`card w-full bg-white`}>
       <button className="" onClick={handleSelect}>
         <figure>
           <Image
             src={getImageSrc(nft.media[0])}
             alt="Album"
-            width={160}
-            height={160}
+            width={260}
+            height={260}
             onError={() => {
               setShowPlaceholder(true);
             }}
+            className="rounded-t-xl"
           />
         </figure>
         <div className="card-body">

@@ -44,6 +44,11 @@ const config = {
         hostname: 'nft-cdn.alchemy.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        hostname: '',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

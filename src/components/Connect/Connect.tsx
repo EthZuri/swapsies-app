@@ -8,7 +8,13 @@ const Connect = () => {
     connector: new InjectedConnector(),
   });
 
-  if (isConnected) return <div>Connected to {ensName ?? address}</div>;
+  if (isConnected)
+    return (
+      <div className="rounded-lg bg-base-100 px-6 py-3">
+        Connected to {ensName ?? address}
+      </div>
+    );
+
   return (
     <button onClick={() => connect()} className="btn-primary btn">
       Connect Wallet
