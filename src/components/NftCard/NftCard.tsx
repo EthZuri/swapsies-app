@@ -33,7 +33,7 @@ const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
     )
   );
   return (
-    <div className={`card w-full bg-white`}>
+    <div className={`card w-full border border-black bg-white`}>
       <button className="" onClick={handleSelect}>
         <figure>
           <Image
@@ -47,11 +47,10 @@ const NftCard = ({ nft, selectedNft, selectNft }: NftCardProps) => {
             className="rounded-t-xl"
           />
         </figure>
-        <div className="card-body">
+        <div className="p-4">
           <h2 className="card-title truncate text-ellipsis">
             {nft.title || "Untitled NFT"}
           </h2>
-          <div className="card-actions justify-end"></div>
         </div>
       </button>
     </div>
