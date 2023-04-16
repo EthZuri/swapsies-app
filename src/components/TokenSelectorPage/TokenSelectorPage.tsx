@@ -157,19 +157,24 @@ const TokenSelectorPage = ({
             )}
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-y-2">
             <h2>Selected Tokens</h2>
-            {selectedToken ? (
-              selectedToken.map((token) => (
-                <div className="flex gap-2 text-black" key={token.symbol}>
-                  <p>
-                    {token.amount} {token.symbol}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="mt-2 text-sm text-zinc-400">No token selected</p>
-            )}
+            <div className="ml-2 flex flex-col">
+              {selectedToken ? (
+                selectedToken.map((token) => (
+                  <div
+                    className="flex gap-2 text-lg font-semibold text-black"
+                    key={token.symbol}
+                  >
+                    <p>
+                      {token.amount} {token.symbol}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="mt-2 text-sm text-zinc-400">No token selected</p>
+              )}
+            </div>
           </div>
         </div>
         <button

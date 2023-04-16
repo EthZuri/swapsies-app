@@ -170,7 +170,7 @@ const Home: NextPage = () => {
 
                     <h2>Selected Tokens</h2>
                     {senderToken ? (
-                      <div className="flex gap-2 text-black">
+                      <div className="flex flex-col gap-2 text-black">
                         {senderToken.map((token) => (
                           <p key={token.symbol}>
                             {token.amount} {token.symbol}
@@ -197,7 +197,7 @@ const Home: NextPage = () => {
 
                     <h2>Selected Tokens</h2>
                     {receiverToken ? (
-                      <div className="flex gap-2 text-black">
+                      <div className="flex flex-col gap-2 text-black">
                         {receiverToken.map((token) => (
                           <p key={token.symbol}>
                             {token.amount} {token.symbol}
