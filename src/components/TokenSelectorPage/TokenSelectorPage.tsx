@@ -1,13 +1,7 @@
 import { type OwnedNft } from "alchemy-sdk";
 import NftCard from "../NftCard";
 import SelectedNft from "../SelectedNft";
-import {
-  useState,
-  type Dispatch,
-  type SetStateAction,
-  type ChangeEvent,
-  useEffect,
-} from "react";
+import { useState, type ChangeEvent, useEffect } from "react";
 
 const stashStyles =
   "grid grid-cols-3 overflow-auto items-center justify-center gap-4 p-4 bg-base-100 border-black text-black w-full h-[580px] overflow-auto";
@@ -24,18 +18,13 @@ interface TokenSelectorPageProps {
         tokenAddress: string;
         amount: number;
         symbol: string;
-      }
+      }[]
     | undefined;
-  selectToken: Dispatch<
-    SetStateAction<
-      | {
-          tokenAddress: string;
-          amount: number;
-          symbol: string;
-        }
-      | undefined
-    >
-  >;
+  selectToken: (token: {
+    tokenAddress: string;
+    amount: number;
+    symbol: string;
+  }) => void;
   selectedNft: OwnedNft[] | null;
   selectNft: (nft: OwnedNft) => void;
   nftList: OwnedNft[] | undefined;
@@ -165,17 +154,13 @@ const TokenSelectorPage = ({
 
           <h2>Selected Tokens</h2>
           {selectedToken ? (
-            <div className="flex gap-2 text-black">
-              <p>
-                {selectedToken.amount} {selectedToken.symbol} selected
-              </p>
-              <button
-                className="btn-primary btn-xs btn-circle btn"
-                onClick={() => selectToken(undefined)}
-              >
-                x
-              </button>
-            </div>
+            selectedToken.map((token) => (
+              <div className="flex gap-2 text-black" key={token.symbol}>
+                <p>
+                  {token.amount} {token.symbol}
+                </p>
+              </div>
+            ))
           ) : (
             <p>No token selected</p>
           )}

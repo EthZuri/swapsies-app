@@ -45,11 +45,6 @@ const config = {
         port: '',
         pathname: '/**',
       },
-      {
-        hostname: '',
-        port: '',
-        pathname: '/**',
-      }
     ],
   },
 };

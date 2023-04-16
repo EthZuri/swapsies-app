@@ -35,17 +35,21 @@ const Home: NextPage = () => {
   const [senderNft, setSenderNft] = useState<OwnedNft[] | null>(null);
   const [receiverNft, setReceiverNft] = useState<OwnedNft[] | null>(null);
 
-  const [senderToken, setSenderToken] = useState<{
-    tokenAddress: string;
-    amount: number;
-    symbol: string;
-  }>();
+  const [senderToken, setSenderToken] = useState<
+    {
+      tokenAddress: string;
+      amount: number;
+      symbol: string;
+    }[]
+  >();
 
-  const [receiverToken, setReceiverToken] = useState<{
-    tokenAddress: string;
-    amount: number;
-    symbol: string;
-  }>();
+  const [receiverToken, setReceiverToken] = useState<
+    {
+      tokenAddress: string;
+      amount: number;
+      symbol: string;
+    }[]
+  >();
 
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -61,11 +65,27 @@ const Home: NextPage = () => {
     nft: OwnedNft,
     setter: Dispatch<SetStateAction<OwnedNft[] | null>>
   ) => {
-    if (!senderNft) {
-      setter([nft]);
-    } else {
-      setter([...senderNft, nft]);
-    }
+    setter((curr) => (curr ? [...curr, nft] : [nft]));
+  };
+
+  const handleSelectToken = (
+    token: {
+      tokenAddress: string;
+      amount: number;
+      symbol: string;
+    },
+    setter: Dispatch<
+      SetStateAction<
+        | {
+            tokenAddress: string;
+            amount: number;
+            symbol: string;
+          }[]
+        | undefined
+      >
+    >
+  ) => {
+    setter((curr) => (curr ? [...curr, token] : [token]));
   };
   return (
     <>
@@ -88,7 +108,7 @@ const Home: NextPage = () => {
           {currentStep === 0 && (
             <TokenSelectorPage
               selectedToken={senderToken}
-              selectToken={setSenderToken}
+              selectToken={(token) => handleSelectToken(token, setSenderToken)}
               selectedNft={senderNft}
               selectNft={(nft: OwnedNft) => {
                 handleSelectNft(nft, setSenderNft);
@@ -119,7 +139,9 @@ const Home: NextPage = () => {
                 nftList={receiverData?.nfts?.ownedNfts}
                 tokenList={senderData?.tokenBalances}
                 isLoading={isLoadingReceiverData || isLoadingSenderData}
-                selectToken={setReceiverToken}
+                selectToken={(token) =>
+                  handleSelectToken(token, setReceiverToken)
+                }
                 selectedToken={receiverToken}
                 onConfirm={() => setCurrentStep(2)}
               />
@@ -140,9 +162,11 @@ const Home: NextPage = () => {
                     <h2>Selected Tokens</h2>
                     {senderToken ? (
                       <div className="flex gap-2 text-black">
-                        <p>
-                          {senderToken.amount} {senderToken.symbol} selected
-                        </p>
+                        {senderToken.map((token) => (
+                          <p key={token.symbol}>
+                            {token.amount} {token.symbol}
+                          </p>
+                        ))}
                       </div>
                     ) : (
                       <p>No token selected</p>
@@ -162,9 +186,11 @@ const Home: NextPage = () => {
                     <h2>Selected Tokens</h2>
                     {receiverToken ? (
                       <div className="flex gap-2 text-black">
-                        <p>
-                          {receiverToken.amount} {receiverToken.symbol} selected
-                        </p>
+                        {receiverToken.map((token) => (
+                          <p key={token.symbol}>
+                            {token.amount} {token.symbol}
+                          </p>
+                        ))}
                       </div>
                     ) : (
                       <p>No token selected</p>
