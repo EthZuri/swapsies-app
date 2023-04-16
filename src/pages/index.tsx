@@ -87,6 +87,7 @@ const Home: NextPage = () => {
   ) => {
     setter((curr) => (curr ? [...curr, token] : [token]));
   };
+
   return (
     <>
       <Head>
@@ -143,7 +144,9 @@ const Home: NextPage = () => {
                   handleSelectToken(token, setReceiverToken)
                 }
                 selectedToken={receiverToken}
-                onConfirm={() => setCurrentStep(2)}
+                onConfirm={() => {
+                  setCurrentStep(2);
+                }}
               />
             </div>
           )}

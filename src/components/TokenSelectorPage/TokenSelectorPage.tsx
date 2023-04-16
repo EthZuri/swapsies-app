@@ -3,14 +3,11 @@ import NftCard from "../NftCard";
 import SelectedNft from "../SelectedNft";
 import { useState, type ChangeEvent, useEffect } from "react";
 
-const stashStyles =
-  "grid grid-cols-3 overflow-auto items-center justify-center gap-4 p-4 bg-base-100 border-black text-black w-full h-[580px] overflow-auto";
-
 const stashStylesToken =
   "gap-4 p-4 bg-base-100 border-black text-black w-full h-[580px] flex justify-center items-center ";
 
 const openTradeContainerStyles =
-  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full h-[500px]";
+  "flex flex-col items-start justify-start gap-4 p-4 bg-white rounded-lg text-black w-full h-[500px]";
 
 interface TokenSelectorPageProps {
   selectedToken:
@@ -83,20 +80,28 @@ const TokenSelectorPage = ({
             Tokens
           </a>
         </div>
-        {isLoading && <div>Loading...</div>}
-
         {selectedTab === 0 && (
-          <div className={stashStyles}>
-            {!nftList
-              ? "No NFT to display"
-              : nftList.map((nft) => (
-                  <NftCard
-                    key={`${nft.tokenId}-${nft.contract.address}`}
-                    nft={nft}
-                    selectedNft={selectedNft}
-                    selectNft={selectNft}
-                  />
-                ))}
+          <div
+            className={`rid h-[580px] w-full ${
+              nftList?.length ? "grid-cols-3" : "grid-cols-1"
+            } items-center justify-center gap-4 overflow-auto border-black bg-base-100 p-4 text-black`}
+          >
+            {!nftList ? (
+              <div className="flex h-96 w-full items-center justify-center">
+                <p className="whitespace-nowrap text-7xl text-white">
+                  No NFT to display
+                </p>
+              </div>
+            ) : (
+              nftList.map((nft) => (
+                <NftCard
+                  key={`${nft.tokenId}-${nft.contract.address}`}
+                  nft={nft}
+                  selectedNft={selectedNft}
+                  selectNft={selectNft}
+                />
+              ))
+            )}
           </div>
         )}
 
@@ -145,25 +150,29 @@ const TokenSelectorPage = ({
       <div className="flex w-1/2 flex-col">
         <h2 className="text-black">Your offer</h2>
         <div className={openTradeContainerStyles}>
-          <h2>Selected NFTs</h2>
-          {selectedNft ? (
-            <SelectedNft nft={selectedNft} />
-          ) : (
-            <p>No NFT selected</p>
-          )}
+          <div className="flex h-64 flex-col items-start">
+            <h2>Selected NFTs</h2>
+            {selectedNft ? (
+              <SelectedNft nft={selectedNft} />
+            ) : (
+              <p className="mt-2 text-sm text-zinc-400"> No NFT selected</p>
+            )}
+          </div>
 
-          <h2>Selected Tokens</h2>
-          {selectedToken ? (
-            selectedToken.map((token) => (
-              <div className="flex gap-2 text-black" key={token.symbol}>
-                <p>
-                  {token.amount} {token.symbol}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p>No token selected</p>
-          )}
+          <div className="flex flex-col">
+            <h2>Selected Tokens</h2>
+            {selectedToken ? (
+              selectedToken.map((token) => (
+                <div className="flex gap-2 text-black" key={token.symbol}>
+                  <p>
+                    {token.amount} {token.symbol}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="mt-2 text-sm text-zinc-400">No token selected</p>
+            )}
+          </div>
         </div>
         <button
           className="btn-primary btn mt-2"
