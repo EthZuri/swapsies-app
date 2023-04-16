@@ -9,11 +9,12 @@ import { api } from "~/utils/api";
 import TokenSelectorPage from "~/components/TokenSelectorPage/TokenSelectorPage";
 import Connect from "~/components/Connect";
 import SelectedNft from "~/components/SelectedNft";
+import BungeeText from "~/components/BungeeText/BungeeText";
 
 const receiverAddress = "0x4B04015B7D7D6D54c6b7342CEc0bb581c7D25b29";
 
 const openTradeContainerStyles =
-  "flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg text-black w-full h-[500px]";
+  "flex flex-col items-center gap-4 p-4 bg-white rounded-lg text-black w-full h-[500px]";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
@@ -155,6 +156,9 @@ const Home: NextPage = () => {
               <div className="flex w-full gap-8">
                 <div className="w-full">
                   <div className={openTradeContainerStyles}>
+                    <div className="text-4xl text-secondary">
+                      <BungeeText>Your offer</BungeeText>
+                    </div>
                     <h2>Selected NFTs</h2>
                     {senderNft ? (
                       <SelectedNft nft={senderNft} />
@@ -179,6 +183,9 @@ const Home: NextPage = () => {
 
                 <div className="w-full">
                   <div className={openTradeContainerStyles}>
+                    <div className="text-4xl text-secondary">
+                      <BungeeText>What you&apos;ll get</BungeeText>
+                    </div>
                     <h2>Selected NFTs</h2>
                     {receiverNft ? (
                       <SelectedNft nft={receiverNft} />

@@ -82,12 +82,10 @@ const TokenSelectorPage = ({
         </div>
         {selectedTab === 0 && (
           <div
-            className={`rid h-[580px] w-full ${
-              nftList?.length ? "grid-cols-3" : "grid-cols-1"
-            } items-center justify-center gap-4 overflow-auto border-black bg-base-100 p-4 text-black`}
+            className={`grid h-[580px] w-full grid-cols-3 items-center justify-center gap-4 overflow-auto border-black bg-base-100 p-4 text-black`}
           >
             {!nftList ? (
-              <div className="flex h-96 w-full items-center justify-center">
+              <div className="col-span-3 flex h-96 w-full items-center justify-center">
                 <p className="whitespace-nowrap text-7xl text-white">
                   No NFT to display
                 </p>
