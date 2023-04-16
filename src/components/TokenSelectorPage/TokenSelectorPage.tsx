@@ -105,8 +105,8 @@ const TokenSelectorPage = ({
 
         {selectedTab === 1 && (
           <div className={stashStylesToken}>
-            <div className="flex flex-col gap-y-2 text-white">
-              <h2 className="text-white">Your tokens</h2>
+            <div className="flex flex-col gap-y-2 text-black">
+              <h2 className="text-black">Available tokens</h2>
               <select
                 className="min-w-md select-bordered select w-full"
                 onChange={(e) => handleTokenSelect(e)}
@@ -120,7 +120,7 @@ const TokenSelectorPage = ({
               <input
                 type="text"
                 placeholder="Enter amount"
-                className="input-bordered input text-white"
+                className="input-bordered input text-black"
                 onChange={(e) => setTokenAmount(e.target.value)}
                 value={tokenAmount}
               />
