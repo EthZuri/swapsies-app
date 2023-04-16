@@ -123,16 +123,18 @@ const Home: NextPage = () => {
           )}
           {currentStep === 1 && (
             <div className="flex w-full flex-col gap-y-2">
-              <label htmlFor="receiverAddress" className="label">
-                Receiver Address
+              <div className="flex items-center justify-center gap-2">
+                <div className="text-4xl text-black">
+                  <BungeeText>Receiver Address: </BungeeText>
+                </div>
                 <input
                   name="receiverAddress"
                   type="text"
-                  className="input"
+                  className="input-primary input w-[420px] bg-gray-200 text-black"
                   value="0xc948f2F172Fe25977E322c8D82F8f53338f8a051"
                   readOnly
                 />
-              </label>
+              </div>
               <TokenSelectorPage
                 selectedNft={receiverNft}
                 selectNft={(nft: OwnedNft) =>
